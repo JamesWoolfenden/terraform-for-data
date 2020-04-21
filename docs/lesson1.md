@@ -2,16 +2,14 @@
 
 ## Your first template
 
-Once you have Terraform and an editor (VScode installed):
+Ensure that you have Terraform and an editor (VScode) installed:
 
-Start - make a **null resource** by creating a file called **null_resource.helloworld.tf**.
-
-A null resource doesn't do anything by itself and doesnt require any CLoud Provider Authentication.
+At your shell, make a **null resource** by creating a file called **null_resource.helloworld.tf**.
 
 ```bash
 touch null_resource.helloworld.tf
 ```
-
+A null resource doesn't do anything by itself and doesnt require any CLoud Provider Authentication.
 Then add the block below to it.
 
 ```terraform
@@ -19,9 +17,9 @@ resource "null_resource" "hello_world" {
 }
 ```
 
-You have created your first Terraform template, but as yet it does nothing.
+You have just created your first Terraform template, but as yet it does nothing.
 
-Next step is to ad a local executable provisioner, to give the null resource some utility:
+The next step is to add a local executable Provisioner, to give the null resource some utility:
 
 ```terraform
 resource "null_resource" "hello_world" {
