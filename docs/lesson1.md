@@ -4,11 +4,11 @@
 
 What is Terraform
 
-A declarative second generation Configuration Management tool designed to Provision Cloud based Infrastructure via Code.
+A declarative second generation Configuration Management tool designed to provision cloud based Infrastructure via Code.
 
 What does that mean?
 
-Its easier to show you the difference between using the Traditional approach using the CLI and Terraform.
+It's easier to show you the difference between using the Traditional approach using the CLI and Terraform.
 
 First up is creating an AWS EC2 instance via the CLI.
 
@@ -117,10 +117,9 @@ $ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.mic
     "ReservationId": "r-07540918b65b09424"
 }
 ```
+Ive got a new instance i-0529e7f9f72b02a53, but if I change the provisioned instance, In anyway, there is no easy way of knowing what has changed and there's no way of knowing what it is supposed to be.
 
-If I change the provisioned instance, In anyway, there is no easy way of knowing what has changed and there's no way of knowing what it is supposed to be.
-
-In Terraform, the same instance in code, stating how the instance should be:
+Below is the same thing In Terraform, in code, stating how the instance should be:
 
 ```terraform
 resource "aws_instance" "example" {
@@ -133,13 +132,13 @@ resource "aws_instance" "example" {
 }
 ```
 
-If you modify the instance in any way - in this case by adding tags:
+Now If you modify the instance in any way - in this case by adding tags:
 
 ```cli
 aws ec2 create-tags --resources i-0529e7f9f72b02a53 --tags Key=Stack,Value=production
 ```
 
-You can check for configuration drift by using Terraform plan, (but not possible with the cli) this command will show the difference between your orignal coded definition and current reality:
+You can check for configuration drift by using Terraform plan, (this is not possible with the cli) this command will show the difference between your orignal coded definition and current reality:
 
 ```cli
 $terraform plan
@@ -223,7 +222,12 @@ can't guarantee that exactly these actions will be performed if
 ```
 Just the Tags are new.
 
-This somehow detected the change in configuration, you can eliminate the "drift" by executing Apply again.
+This somehow detected the change in configuration.
+You can eliminate the "drift" by executing Terraform Apply again.
+
+### Idempotency
+
+Configuration managament tools are generally Idempotent.
 
 If you execute your AWS command:
 
@@ -233,9 +237,9 @@ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro
 
 What would happen?
 
-You'd get multiple new instances as the command is not Idempotent.
+You'd get anopther new instances as the command is not Idempotent.
 
-This doesn't happen as each invocation in Terraform is matched with is resulting Terrafrom.tfstate or its state file which is used to maintain a record of activity.
+This doesn't happen with each invocation in Terraform, each invocation is matched with is resulting **Terrafrom.tfstate** or its state file which is used to maintain a record of activity.
 This "statefile" is crucial to your use and understanding of how Terraform works.
 
 To remove the instance via the cli id have exectute a whole new cli command but id also have to find the instance_id.
