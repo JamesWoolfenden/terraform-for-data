@@ -26,9 +26,11 @@ You can test your AWS authentication with a basic AWS command:
 
 ```cli
 aws s3 ls
+2020-04-09 09:38:42 elasticbeanstalk-eu-west-1-680235478471
+2020-04-09 09:38:08 whosebucketisitanyway
 ```
 
-If that is successful we can progress to out task.
+If that is successful we can progress to our task.
 
 ## Provisioning an VPC Endpoint for S3 - PrivateLink
 
@@ -53,7 +55,7 @@ Terraform init
 Terraform apply
 ```
 
-## Datasources
+### Datasources
 
 To Add a VPC endpoint we first need to gather some basic information from the account, datasources are used for this **data.tf**:
 
@@ -64,7 +66,7 @@ data "aws_region" "current" {}
 
 This will give ALL the VPC's is region as well as the current region.
 
-## Create and AWS resource
+### Create and AWS resource
 
 Add the code to create the S3 Endpoint **aws_vpc_endpoint.s3.tf**:
 
@@ -90,7 +92,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 1. What is missing from this to set up access for an EC2 instance to use the Private Link?
 
-- There's no route, modification to the routeables is required.
+- There's no route, a modification to the routeable is still required.
 
 ## Documentation
 
