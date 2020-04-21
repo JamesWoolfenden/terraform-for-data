@@ -4,7 +4,7 @@
 
 From <https://github.com/chanzuckerberg/terraform-provider-snowflake> download your platforms latest provider <https://github.com/chanzuckerberg/terraform-provider-snowflake/releases>:
 
-Find the example archive **examples\lesson04\terraform-provider-snowflake_0.11.0_linux_amd64.tar.gz**
+Or find the example archive **examples\lesson04\terraform-provider-snowflake_0.11.0_linux_amd64.tar.gz**
 
 Expand the archive and add it to your Terraform plugins:
 
@@ -12,15 +12,14 @@ Expand the archive and add it to your Terraform plugins:
 tar -xvf terraform-provider-snowflake_0.11.0_linux_amd64.tar.gz
 mv terraform-provider-snowflake_v0.11.0 $HOME/.terraform.d/plugins/linux_amd64/
 ```
-
-You'll need to add your Snowflake credentials as environmental variables:
+ToSet-up Authentication with Snowflake, you'll need to add your Snowflake credentials as environmental variables:
 
 ```bash
 export SNOWFLAKE_USER='yourusername'
 export SNOWFLAKE_PASSWORD='yourpassword'
 ```
 
-and then create _provider.snowflake.tf_
+and then create _provider.snowflake.tf_ to managed the Snowflake provider in Terraform.
 
 ```terraform
 provider "snowflake" {
@@ -32,9 +31,11 @@ provider "snowflake" {
 
 Adding in your own vales for **account and region**
 
-You can then check authentication using terraform init and plan.
+You can then check authentication using Terraform **init** and **plan**.
 
-Then next step is to try and create some Snowflake objects, starting with Schemas.
+Now that Authectication is validated, then next step is to try and create some Snowflake objects.
+
+Starting with Schemas - **snowflake_schmea.schema.tf**.
 
 ```terraform
 resource "snowflake_schema" "schema" {
@@ -45,14 +46,14 @@ resource "snowflake_schema" "schema" {
 }
 ```
 
-This needs to have the variable schema defined in **variables.tf**
+This template needs to have the variable **schema** defined,  create **variables.tf**
 
 ```terraform
 variable "schemas" {
 }
 ```
 
-And the values for schema set in **snowflake.auto.tfvars**
+And set the values for your schemas with **snowflake.auto.tfvars**
 
 ```json
 schemas = {
@@ -69,7 +70,7 @@ schemas = {
 
 This should now create 2 schemas, RAW and ANALYTICS (assuming you already have a DEMO_DB).
 
-Test with Terraform init and plan
+Test as before with Terraform init and plan
 
 ```bash
  $ terraform plan
@@ -113,7 +114,7 @@ Plan: 2 to add, 0 to change, 0 to destroy.
 ------------------------------------------------------------------------
 ```
 
-Invoke the changes:
+Invoke the changes with **Terraform apply**, selecting yes:
 
 ```bash
 Do you want to perform these actions?
@@ -130,7 +131,7 @@ snowflake_schema.schema["RAW"]: Creation complete after 1s [id=DEMO_DB|RAW]
 Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
 ```
 
-You can check the changes in the Snowflake UI, or via SnowSQL with:
+Terraform is stating that the Schemas have been created, you can verify the changes in the Snowflake UI, or via SnowSQL with:
 
 ```sql
 describe database DEMO_DB;
@@ -141,8 +142,9 @@ created_on	name	kind
 2020-04-17 02:02:42.057 -0700	PUBLIC	SCHEMA
 2020-04-21 02:33:30.736 -0700	RAW	SCHEMA
 ```
+So thats Terraform creating Snowflake resources via IaC.
 
-You can then remove these schemas with Terraform destroy:
+You can then clean up remove these schemas with Terraform destroy:
 
 ```bash
  $ terraform  destroy
@@ -204,12 +206,15 @@ created_on	name	kind
 !!! note "Takeaways" - blah
 
 - Can create Snowflake db objects via Terraform.
+- Clean of DB objects by default.
 
 ## Exercise
 
 1. Create Snowflake users via Terraform.
 
 ## Questions
+
+1. Is this any better than using standrard SQL tooling? 
 
 ## Documentation
 
