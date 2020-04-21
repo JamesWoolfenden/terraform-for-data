@@ -2,11 +2,11 @@
 
 ## Modules
 
-Like many modern languages, Terraform support the use of libraries or in Terraform Modules.
+Like any modern languages, Terraform supports the use of libraries or in Terraform - Modules.
 You can write you own, or re-use published modules. Hashicorp maintains a public Registry at <https://registry.terraform.io>.
 You can save yourself and others a lot of time by using and publishing modules.
 
-To create a MSSQL instance in RDS I could use the existing module "jameswoolfenden/rds/aws" <https://registry.terraform.io/modules/JamesWoolfenden/rds/aws/0.1.4>
+To create a MSSQL instance in RDS I write all resource myslef or I could re-use the existing module "jameswoolfenden/rds/aws" <https://registry.terraform.io/modules/JamesWoolfenden/rds/aws/0.1.4>
 
 This is implemented in **module.sql.tf**
 
@@ -23,7 +23,7 @@ module "rds-mssql" {
 }
 ```
 
-Add your variables.tf
+Add your **variables.tf**
 ```
 variable "instance" {
 }
@@ -91,7 +91,7 @@ subnet_group = [{
 subnet_ids = ["subnet-f60eff81", "subnet-11438974", "subnet-ebd9cead"]
 ```
 
-Now when you apply, you will (eventually SQLServer provisioning is slow) create a MSSql server instance.
+Now when you apply, you will (eventually SQLServer provisioning is slow) create a MSSQL server instance.
 
 !!! note "Takeaways"
     - reuse
