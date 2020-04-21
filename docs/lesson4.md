@@ -214,7 +214,7 @@ created_on	name	kind
 
 ## Questions
 
-1. Is this any better than using standrard SQL tooling? 
+1. Is this any better than using standard SQL tooling? 
 
 ## Documentation
 
