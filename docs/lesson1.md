@@ -1,4 +1,239 @@
-# Lesson 101 Hello World
+# Lesson 101 Introduction and Hello World
+
+## Introduction to Terraform
+
+What is Terraform
+
+A declarative second generation Configuration Management tool designed to Provision Cloud based Infrastructure via Code.
+
+What does that mean?
+
+Creating an AWS EC2 instance via the CLI
+
+```cli
+$ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro --key-name basic --region eu-west-2 --subnet-id subnet-05f8f3c120238ca8d
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-7ad7c21e",
+            "InstanceId": "i-0529e7f9f72b02a53",
+            "InstanceType": "t2.micro",
+            "KeyName": "basic",
+            "LaunchTime": "2020-04-21T13:28:11.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "eu-west-2a",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-10-0-0-187.eu-west-2.compute.internal",
+            "PrivateIpAddress": "10.0.0.187",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-05f8f3c120238ca8d",
+            "VpcId": "vpc-0e2e925de622375b5",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2020-04-21T13:28:11.000Z",
+                        "AttachmentId": "eni-attach-0cbcd67ab97add978",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "default",
+                            "GroupId": "sg-05749b21616ab0cdc"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "06:2c:00:49:c8:64",
+                    "NetworkInterfaceId": "eni-0898a0bee39c83400",
+                    "OwnerId": "680235478471",
+                    "PrivateDnsName": "ip-10-0-0-187.eu-west-2.compute.internal",
+                    "PrivateIpAddress": "10.0.0.187",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateDnsName": "ip-10-0-0-187.eu-west-2.compute.internal",
+                            "PrivateIpAddress": "10.0.0.187"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-05f8f3c120238ca8d",
+                    "VpcId": "vpc-0e2e925de622375b5",
+                    "InterfaceType": "interface"
+                }
+            ],
+            "RootDeviceName": "/dev/sda1",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "default",
+                    "GroupId": "sg-05749b21616ab0cdc"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            },
+            "CapacityReservationSpecification": {
+                "CapacityReservationPreference": "open"
+            },
+            "MetadataOptions": {
+                "State": "pending",
+                "HttpTokens": "optional",
+                "HttpPutResponseHopLimit": 1,
+                "HttpEndpoint": "enabled"
+            }
+        }
+    ],
+    "OwnerId": "680235478471",
+    "ReservationId": "r-07540918b65b09424"
+}
+```
+
+If I change the provisioned instance, In anyway, there is no easy way of knowing what has changed and there's no way of knowing what it is supposed to be.
+
+In Terraform, the same instance in code, stating how the instance should be:
+
+```terraform
+resource "aws_instance" "example" {
+  instance_type = "t2.micro"
+  ami           = "ami-7ad7c21e"
+  subnet_id     = "subnet-05f8f3c120238ca8d"
+  vpc_security_group_ids = [
+    "sg-05749b21616ab0cdc",
+  ]
+}
+```
+
+Now if we modify the instance in any way - in this case by adding tags
+
+```cli
+aws ec2 create-tags --resources i-0529e7f9f72b02a53 --tags Key=Stack,Value=production
+```
+
+You can check for configuration drift by using Terraform plan, this command will show the difference between your code and reality:
+
+```cli
+$terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+aws_instance.example: Refreshing state... [id=i-0529e7f9f72b02a53]
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  ~ update in-place
+
+Terraform will perform the following actions:
+
+  # aws_instance.example will be updated in-place
+  ~ resource "aws_instance" "example" {
+        ami                          = "ami-7ad7c21e"
+        arn                          = "arn:aws:ec2:eu-west-2:680235478471:instance/i-0529e7f9f72b02a53"
+        associate_public_ip_address  = false
+        availability_zone            = "eu-west-2a"
+        cpu_core_count               = 1
+        cpu_threads_per_core         = 1
+        disable_api_termination      = false
+        ebs_optimized                = false
+        get_password_data            = false
+        hibernation                  = false
+        id                           = "i-0529e7f9f72b02a53"
+        instance_state               = "running"
+        instance_type                = "t2.micro"
+        ipv6_address_count           = 0
+        ipv6_addresses               = []
+        key_name                     = "basic"
+        monitoring                   = false
+        primary_network_interface_id = "eni-0898a0bee39c83400"
+        private_dns                  = "ip-10-0-0-187.eu-west-2.compute.internal"
+        private_ip                   = "10.0.0.187"
+        security_groups              = []
+        source_dest_check            = true
+        subnet_id                    = "subnet-05f8f3c120238ca8d"
+      ~ tags                         = {
+          - "Stack" = "production" -> null
+        }
+        tenancy                      = "default"
+        volume_tags                  = {}
+        vpc_security_group_ids       = [
+            "sg-05749b21616ab0cdc",
+        ]
+
+        credit_specification {
+            cpu_credits = "standard"
+        }
+
+        metadata_options {
+            http_endpoint               = "enabled"
+            http_put_response_hop_limit = 1
+            http_tokens                 = "optional"
+        }
+
+        root_block_device {
+            delete_on_termination = true
+            encrypted             = false
+            iops                  = 200
+            volume_id             = "vol-0e3a5e292da87bd32"
+            volume_size           = 8
+            volume_type           = "io1"
+        }
+
+        timeouts {}
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+```
+
+This somehow detected the change in configuration, you can eliminate the "drift" by executing Apply again.
+
+If you execute your AWS command:
+
+```cli
+aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro --key-name basic --region eu-west-2 --subnet-id subnet-05f8f3c120238ca8d
+```
+
+What would happen?
+
+You'd get multiple new instances as the command is not Idempotent.
+
+This doesn't happen as each invocation in Terraform is matched with is resulting Terrafrom.tfstate or its state file which is used to maintain a record of activity.
+This "statefile" is crucial to your use and understanding of how Terraform works.
 
 ## Your first template
 
@@ -9,7 +244,8 @@ At your shell, make a **null resource** by creating a file called **null_resourc
 ```bash
 touch null_resource.helloworld.tf
 ```
-A null resource doesn't do anything by itself and doesnt require any CLoud Provider Authentication.
+
+A null resource doesn't do anything by itself and doesn't require any Cloud Provider Authentication.
 Then add the block below to it.
 
 ```terraform
@@ -30,7 +266,7 @@ resource "null_resource" "hello_world" {
 }
 ```
 
-Fairly straighforward? 
+Fairly straighforward?
 
 Time to try your work with **terraform init** at your shell.
 
@@ -164,10 +400,10 @@ I rarely use Provisioners myself these days, they are bad style and a hangover f
 
 ## Questions
 
-1. When could specifing the Version still be insufficient for repeatability?
-   - when the underlying API itself changes and is no longer backwardly compatible, this wont happen very quickly but it will happen. 
-   Its also is bound to the version of the Terraform tool you are using.
- 
+1. When could specifying the Version still be insufficient for repeatability?
+   - when the underlying API itself changes and is no longer backwardly compatible, this wont happen very quickly but it will happen.
+     Its also is bound to the version of the Terraform tool you are using.
+
 ## Documentation
 
 For more on null resource see the Hashicorp docs:

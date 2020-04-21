@@ -4,8 +4,8 @@ In the previous example there was no Auth as there was no Cloud API/Provider.
 
 ## pre-requisites
 
-- aws account
-- iam user and access keys
+- an AWS account
+- IAM user with access keys
 
 Setting up basic Auth for AWS/Terraform.
 
@@ -57,7 +57,7 @@ Terraform apply
 
 ### Datasources
 
-To add a VPC endpoint, we first need to gather some basic information from the account, datasources are very useful for this, create  **data.tf**:
+To add a VPC endpoint, we first need to gather some basic information from the account, datasources are very useful for this, create **data.tf**:
 
 ```terraform
 data "aws_vpcs" "cluster" {}
@@ -85,7 +85,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 element(tolist(data.aws_vpcs.cluster.ids), 0) will cast to a list and then return the element of the list at 0 - a vpc_id.
 
-${data.aws_region.current.name} will be replaced in Terraform by my aws region **eu-west-1**.
+\${data.aws_region.current.name} will be replaced in Terraform by my aws region **eu-west-1**.
 
 As you will see when you Terraform apply:
 
@@ -165,20 +165,21 @@ endpoint = {
 }
 ```
 
-!!! note "Takeaways" 
-   - datasources
-   - token replacement
-   - casting and indexing of lists
+!!! note "Takeaways"
+
+- datasources
+- token replacement
+- casting and indexing of lists
 
 ## Exercise
 
-1.
+1. Add outputs so that you can see all the values for the created resource.
 
 ## Questions
 
 1. What is missing from this to set up access for an EC2 instance to use the Private Link?
 
-- There's no route, a modification to the routeable is still required.
+- There's no route, a modification to the route-able is still required.
 
 ## Documentation
 
