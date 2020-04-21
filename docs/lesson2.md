@@ -57,18 +57,19 @@ Terraform apply
 
 ### Datasources
 
-To Add a VPC endpoint we first need to gather some basic information from the account, datasources are used for this **data.tf**:
+To add a VPC endpoint, we first need to gather some basic information from the account, datasources are very useful for this, create  **data.tf**:
 
 ```terraform
 data "aws_vpcs" "cluster" {}
 data "aws_region" "current" {}
 ```
 
-This will give ALL the VPC's is region as well as the current region.
+This will return ALL the VPC's is a region as well as what the current region is.
 
 ### Create and AWS resource
 
 Add the code to create the S3 Endpoint **aws_vpc_endpoint.s3.tf**:
+This uses values from the datasources.
 
 ```terraform
 resource "aws_vpc_endpoint" "s3" {
@@ -82,7 +83,92 @@ resource "aws_vpc_endpoint" "s3" {
 }
 ```
 
-!!! note "Takeaways" - blah
+element(tolist(data.aws_vpcs.cluster.ids), 0) will cast to a list and then return the element of the list at 0 - a vpc_id.
+
+${data.aws_region.current.name} will be replaced in Terraform by my aws region **eu-west-1**.
+
+As you will see when you Terraform apply:
+
+```terraform apply
+$ terraform apply
+data.aws_region.current: Refreshing state...
+data.aws_vpcs.cluster: Refreshing state...
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_vpc_endpoint.s3 will be created
+  + resource "aws_vpc_endpoint" "s3" {
+      + cidr_blocks           = (known after apply)
+      + dns_entry             = (known after apply)
+      + id                    = (known after apply)
+      + network_interface_ids = (known after apply)
+      + owner_id              = (known after apply)
+      + policy                = (known after apply)
+      + prefix_list_id        = (known after apply)
+      + private_dns_enabled   = false
+      + requester_managed     = (known after apply)
+      + route_table_ids       = (known after apply)
+      + security_group_ids    = (known after apply)
+      + service_name          = "com.amazonaws.eu-west-1.s3"
+      + state                 = (known after apply)
+      + subnet_ids            = (known after apply)
+      + tags                  = {
+          + "Name"      = "S3"
+          + "createdby" = "Terraform"
+        }
+      + vpc_endpoint_type     = "Gateway"
+      + vpc_id                = "vpc-510efa34"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+aws_vpc_endpoint.s3: Creating...
+aws_vpc_endpoint.s3: Creation complete after 6s [id=vpce-0340fd0233d361bde]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+endpoint = {
+  "cidr_blocks" = [
+    "52.218.0.0/17",
+  ]
+  "dns_entry" = []
+  "id" = "vpce-0340fd0233d361bde"
+  "network_interface_ids" = []
+  "owner_id" = "680235478471"
+  "policy" = "{\"Statement\":[{\"Action\":\"*\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":\"*\"}],\"Version\":\"2008-10-17\"}"
+  "prefix_list_id" = "pl-6da54004"
+  "private_dns_enabled" = false
+  "requester_managed" = false
+  "route_table_ids" = []
+  "security_group_ids" = []
+  "service_name" = "com.amazonaws.eu-west-1.s3"
+  "state" = "available"
+  "subnet_ids" = []
+  "tags" = {
+    "Name" = "S3"
+    "createdby" = "Terraform"
+  }
+  "vpc_endpoint_type" = "Gateway"
+  "vpc_id" = "vpc-510efa34"
+}
+```
+
+!!! note "Takeaways" 
+   - datasources
+   - token replacement
+   - casting and indexing of lists
 
 ## Exercise
 
