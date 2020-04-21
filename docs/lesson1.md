@@ -1,10 +1,12 @@
 # Lesson 101 Hello World
 
-## my first template
+## Your first template
 
-To start, make a null resource by creating a file called **null_resource.helloworld.tf**.
+Once you have Terraform and and editor (VScode installed):
 
-A null resource doesn't do anything by itself.
+Start - make a **null resource** by creating a file called **null_resource.helloworld.tf**.
+
+A null resource doesn't do anything by itself and doesnt require any CLoud Provider Authentication.
 
 ```bash
 touch null_resource.helloworld.tf
@@ -19,7 +21,7 @@ resource "null_resource" "hello_world" {
 
 You have created your first Terraform template, but as yet it does nothing.
 
-Adding a local executable provisioner to give the null resource some utility:
+Next step is to ad a local executable provisioner, to give the null resource some utility:
 
 ```terraform
 resource "null_resource" "hello_world" {
@@ -30,7 +32,9 @@ resource "null_resource" "hello_world" {
 }
 ```
 
-Time to try your work with **terraform init**.
+Fairly straighforward? 
+
+Time to try your work with **terraform init** at your shell.
 
 ```bash
 $ terraform init
@@ -117,7 +121,7 @@ drwxrwxrwx 1 jim jim 512 Feb 22 06:56 .terraform
 
 ### Refactor
 
-Specify the exact Provider version required **provider.null.tf**
+We can be and should be more specify, state the exact Provider version required **provider.null.tf**
 
 ```terraform
 provider "null" {
@@ -162,6 +166,10 @@ I rarely use Provisioners myself these days, they are bad style and a hangover f
 
 ## Questions
 
+1. When could specifing the Version still be insufficient for repeatability?
+   - when the underlying API itself changes and is no longer backwardly compatible, this wont happen very quickly but it will happen. 
+   Its also is bound to the version of the Terraform tool you are using.
+ 
 ## Documentation
 
 For more on null resource see the Hashicorp docs:
