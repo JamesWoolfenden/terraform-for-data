@@ -2,7 +2,7 @@
 
 ## Your first template
 
-Once you have Terraform and and editor (VScode installed):
+Once you have Terraform and an editor (VScode installed):
 
 Start - make a **null resource** by creating a file called **null_resource.helloworld.tf**.
 
