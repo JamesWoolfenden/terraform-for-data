@@ -4,13 +4,13 @@ site_name: Terraform for data
 nav:
   - Home: index.md
   - Terraform 101:
-      - Lesson 101: lesson1.md
-      - Lesson 102: lesson2.md
-      - Lesson 103: lesson3.md
-      - Lesson 104: lesson4.md
-      - Lesson 105: lesson5.md
-      - Lesson 106: lesson6.md
-      - Lesson 107: lesson7.md
+      - Lesson 101 Hello World: lesson1.md
+      - Lesson 102 AWS: lesson2.md
+      - Lesson 103 AWS RDS MSSQL: lesson3.md
+      - Lesson 104 Snowflake: lesson4.md
+      #- Lesson 105: lesson5.md
+      #- Lesson 106: lesson6.md
+      #- Lesson 107: lesson7.md
   - Help: help.md
   - About: about.md
 theme:
