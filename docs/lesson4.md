@@ -1,4 +1,4 @@
-# Lesson 104
+# Lesson 104 Terraforming Snowflake
 
 ## Install Custom Snowflake provider
 
