@@ -245,11 +245,14 @@ This "statefile" is crucial to your use and understanding of how Terraform works
 To remove the instance via the cli id have exectute a whole new cli command but id also have to find the instance_id.
 With Terraform its just:
 
-```
+```cli
 Terraform destroy
 ```
+
 And the account will return to state it was before you created the instance, no orphaned objects ever remain.
-!!! note "Takeaways" - The destroy and apply command always give you a chance to review the changes before they happen. 
+
+!!! note "Takeaways" 
+    - The destroy and apply command always give you a chance to review the changes before they happen.
 
 ## Hello World
 
@@ -408,7 +411,12 @@ resource "null_resource" "waiter" {
 This is basically a hack, pretty much any use of a null resources is up to something dubious. In this case AWS was being rubbish and reported that an object was made when it wasn't yet - _eventually consistent_ and so here we are with a sleep statement.
 I rarely use Provisioners myself these days, they are bad style and a hangover from Terraforms beginnings.
 
-!!! note "Takeaways" - Naming - Versions - Provisioners - Providers - Plan & apply
+!!! note "Takeaways"
+    - Naming
+    - Versions
+    - Provisioners
+    - Providers
+    - Plan & apply
 
 ## Exercise
 
