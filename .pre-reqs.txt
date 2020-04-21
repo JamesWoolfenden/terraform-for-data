@@ -1,10 +1,10 @@
 # required
 python37
-pip install mkdocs
-pip install pymdown-extensions
-pip install mkdocs-material
-pip install mkdocs-minify-plugin
-pip install mkdocs-add-teaser
+pip install mkdocs --upgrade
+pip install pymdown-extensions --upgrade
+pip install mkdocs-material --upgrade
+pip install mkdocs-minify-plugin --upgrade
+pip install mkdocs-add-teaser --upgrade
 
 #Vscode
 https://marketplace.visualstudio.com/items?itemName=jebbs.markdown-extended
