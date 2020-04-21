@@ -32,7 +32,7 @@ aws s3 ls
 
 If that is successful we can progress to our task.
 
-## Provisioning an VPC Endpoint for S3 - PrivateLink
+## VPC Endpoint for S3 - PrivateLink
 
 A provisioned PrivateLink means that all traffic is routed private to the endpoint rather than over the internet.
 
