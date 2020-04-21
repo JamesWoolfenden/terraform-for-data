@@ -8,7 +8,9 @@ A declarative second generation Configuration Management tool designed to Provis
 
 What does that mean?
 
-Creating an AWS EC2 instance via the CLI
+Its easier to show you the difference between using the Traditional approach using the CLI and Terraform.
+
+First up is creating an AWS EC2 instance via the CLI.
 
 ```cli
 $ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro --key-name basic --region eu-west-2 --subnet-id subnet-05f8f3c120238ca8d
@@ -131,13 +133,13 @@ resource "aws_instance" "example" {
 }
 ```
 
-Now if we modify the instance in any way - in this case by adding tags
+If you modify the instance in any way - in this case by adding tags:
 
 ```cli
 aws ec2 create-tags --resources i-0529e7f9f72b02a53 --tags Key=Stack,Value=production
 ```
 
-You can check for configuration drift by using Terraform plan, this command will show the difference between your code and reality:
+You can check for configuration drift by using Terraform plan, (but not possible with the cli) this command will show the difference between your orignal coded definition and current reality:
 
 ```cli
 $terraform plan
@@ -219,6 +221,7 @@ Note: You didn't specify an "-out" parameter to save this plan, so Terraform
 can't guarantee that exactly these actions will be performed if
 "terraform apply" is subsequently run.
 ```
+Just the Tags are new.
 
 This somehow detected the change in configuration, you can eliminate the "drift" by executing Apply again.
 
@@ -235,7 +238,16 @@ You'd get multiple new instances as the command is not Idempotent.
 This doesn't happen as each invocation in Terraform is matched with is resulting Terrafrom.tfstate or its state file which is used to maintain a record of activity.
 This "statefile" is crucial to your use and understanding of how Terraform works.
 
-## Your first template
+To remove the instance via the cli id have exectute a whole new cli command but id also have to find the instance_id.
+With Terraform its just:
+
+```
+Terraform destroy
+```
+And the account will return to state it was before you created the instance, no orphaned objects ever remain.
+!!! note "Takeaways" - The destroy and apply command always give you a chance to review the changes before they happen. 
+
+## Hello World
 
 Ensure that you have Terraform and an editor (VScode) installed:
 
