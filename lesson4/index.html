@@ -8,19 +8,19 @@
 <span class=na>  subnet_group</span>      <span class=o>=</span> <span class=err>var</span><span class=p>.</span><span class=err>subnet_group</span>
 <span class=na>  subnet_ids</span>        <span class=o>=</span> <span class=err>var</span><span class=p>.</span><span class=err>subnet_ids</span>
 <span class=" -Punctuation">}</span>
-</pre></div> <p>Add your <strong>variables.tf</strong> <div class=codehilite><pre><span></span><span class=k>variable</span> <span class=ss>&quot;instance&quot;</span> <span class=err>{</span>
-<span class=err>}</span>
+</pre></div> <p>Add your <strong>variables.tf</strong></p> <div class=codehilite><pre><span></span><span class=kr>variable</span> <span class=s>&quot;instance&quot;</span> <span class=" -Punctuation">{</span>
+<span class=" -Punctuation">}</span>
 
-<span class=k>variable</span> <span class=ss>&quot;subnet_group&quot;</span> <span class=err>{</span>
-<span class=err>}</span>
+<span class=kr>variable</span> <span class=s>&quot;subnet_group&quot;</span> <span class=" -Punctuation">{</span>
+<span class=" -Punctuation">}</span>
 
 
-<span class=k>variable</span> <span class=ss>&quot;common_tags&quot;</span> <span class=err>{</span>
-<span class=err>}</span>
+<span class=kr>variable</span> <span class=s>&quot;common_tags&quot;</span> <span class=" -Punctuation">{</span>
+<span class=" -Punctuation">}</span>
 
-<span class=k>variable</span> <span class=ss>&quot;subnet_ids&quot;</span> <span class=err>{</span>
-<span class=err>}</span>
-</pre></div></p> <p>And your values <strong>sqlserver.auto.tfvars</strong> you'll need to supply different subnets:</p> <div class=codehilite><pre><span></span><span class=n>instance</span> <span class=o>=</span> <span class=err>{</span>
+<span class=kr>variable</span> <span class=s>&quot;subnet_ids&quot;</span> <span class=" -Punctuation">{</span>
+<span class=" -Punctuation">}</span>
+</pre></div> <p>And your values <strong>sqlserver.auto.tfvars</strong> you'll need to supply different subnets:</p> <div class=codehilite><pre><span></span><span class=n>instance</span> <span class=o>=</span> <span class=err>{</span>
   <span class=n>auto_minor_version_upgrade</span>            <span class=o>=</span> <span class=k>false</span>
   <span class=n>allocated_storage</span>                     <span class=o>=</span> <span class=mi>20</span>
   <span class=n>availability_zone</span>                     <span class=o>=</span> <span class=ss>&quot;&quot;</span>
