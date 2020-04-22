@@ -275,14 +275,19 @@ All other commands:
     state              Advanced state management
 ```
 
-Of that list you use small basic sub-set frequently, you need to know, **init**, **apply**, **destroy** and **plan**:
-It always starts with init, but that only needs to run initially and if you need a new module or change the state backend. The life-cycle is:
+Of that list you use small basic sub-set frequently, you need to know, **init**, **apply**, **destroy** and **plan**.
 
+It always starts with **init**, but that only needs to run initially and if you need a new module or change the state backend. The life-cycle is:
+
+```cli
 init->apply->destroy
+```
 
-### Idempotency
+## Idempotency
 
-Configuration management tools are generally Idempotent.
+As you saw in the example Terraform doesn't create a new resource on every run. It differs from Tools like cloud formation or scripting in that is idempotent. When it fails it stops or fails it doesn't clean up automatically. You can fix your mistake and Terraform will only change what you changed and hopefully what failed in your last run.
+
+Nearly all modern configuration management tools are Idempotent.
 
 If you execute your AWS command:
 
@@ -292,7 +297,7 @@ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro
 
 What would happen?
 
-You'd get another new instances as the command is not Idempotent.
+Yes, you'd get another new instances. This can get expensive if you're not paying close enough attention.
 
 This doesn't happen with each invocation in Terraform, each invocation is matched with is resulting **Terrafrom.tfstate** or its state file which is used to maintain a record of activity.
 This "statefile" is crucial to your use and understanding of how Terraform works.
@@ -308,3 +313,11 @@ And the account will return to state it was before you created the instance, no 
 
 !!!note "Takeaways"
     - The destroy and apply command always give you a chance to review the changes before they happen.
+
+## Exercise
+
+1. Go through the Hashicorp Learn site for more basic information <https://learn.hashicorp.com/terraform>
+
+## Questions
+
+## Documentation
