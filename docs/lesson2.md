@@ -1,127 +1,86 @@
-# Lesson 102 AWS Authentication and Endpoints
+# lesson 02 Hello World
 
-In the previous example there was no Auth as there was no Cloud API/Provider.
+## Pre-requisite
 
-## pre-requisites
+Ensure that you have Terraform and an editor (VScode) installed:
 
-- an AWS account
-- IAM user with access keys
+At your shell, make a **null resource** by creating a file called **null_resource.helloworld.tf**.
 
-Setting up basic Auth for AWS/Terraform.
-
-- Install aws-cli
-- Install aws auth using you access keys
-
-```cli
-$ aws configure
-AWS Access Key ID [****************ZTLA]:
-AWS Secret Access Key [****************Z5Pj]:
-Default region name [eu-west-1]:
-Default output format [json]:
+```bash
+touch null_resource.helloworld.tf
 ```
 
-## Test Auth
-
-You can test your AWS authentication with a basic AWS command:
-
-```cli
-aws s3 ls
-2020-04-09 09:38:42 elasticbeanstalk-eu-west-1-680235478471
-2020-04-09 09:38:08 whosebucketisitanyway
-```
-
-If that is successful we can progress to our task.
-
-## VPC Endpoint for S3 - PrivateLink
-
-A provisioned PrivateLink means that all traffic is routed private to the endpoint rather than over the internet.
-
-### Add the Provider
-
-Create **provider.aws.tf**
+A null resource doesn't do anything by itself and doesn't require any Cloud Provider Authentication.
+Then add the block below to it.
 
 ```terraform
-provider "aws" {
-  region  = "eu-west-1"
-  version = "2.54"
+resource "null_resource" "hello_world" {
 }
 ```
 
-This completes you basic Authentication for AWS and Terraform.
-Test with:
+You have just created your first Terraform template, but as yet it does nothing.
 
-```cli
-Terraform init
-Terraform apply
-```
-
-### Datasources
-
-To add a VPC endpoint, we first need to gather some basic information from the account, datasources are very useful for this, create **data.tf**:
+The next step is to add a local executable Provisioner, to give the null resource some utility:
 
 ```terraform
-data "aws_vpcs" "cluster" {}
-data "aws_region" "current" {}
-```
-
-This will return ALL the VPC's is a region as well as what the current region is.
-
-### Create and AWS resource
-
-Add the code to create the S3 Endpoint **aws_vpc_endpoint.s3.tf**:
-This uses values from the datasources.
-
-```terraform
-resource "aws_vpc_endpoint" "s3" {
-
-  vpc_id       = element(tolist(data.aws_vpcs.cluster.ids), 0)
-  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
-
-  tags = {
-  "createdby" = "Terraform"
-  "Name"      = "S3"}
+resource "null_resource" "hello_world" {
+  provisioner "local-exec" {
+    # This is a comment
+    command = "echo 'hello world'"
+  }
 }
 ```
 
-element(tolist(data.aws_vpcs.cluster.ids), 0) will cast to a list and then return the element of the list at 0 - a vpc_id.
+Fairly straighforward?
 
-\${data.aws_region.current.name} will be replaced in Terraform by my aws region **eu-west-1**.
+Time to try your work with **terraform init** at your shell.
 
-As you will see when you Terraform apply:
+```bash
+$ terraform init
 
-```terraform apply
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "null" (hashicorp/null) 2.1.2...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.null: version = "~> 2.1"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+```
+
+Terraform init is only needed on new templates and when you add modules or change module versions or providers.
+You don't have to remember it all, Terraform will fail at apply.
+
+Now that has been set up, you can try **terraform apply**, and when prompted, say yes.
+
+```bash
 $ terraform apply
-data.aws_region.current: Refreshing state...
-data.aws_vpcs.cluster: Refreshing state...
-
 An execution plan has been generated and is shown below.
 Resource actions are indicated with the following symbols:
   + create
 
 Terraform will perform the following actions:
 
-  # aws_vpc_endpoint.s3 will be created
-  + resource "aws_vpc_endpoint" "s3" {
-      + cidr_blocks           = (known after apply)
-      + dns_entry             = (known after apply)
-      + id                    = (known after apply)
-      + network_interface_ids = (known after apply)
-      + owner_id              = (known after apply)
-      + policy                = (known after apply)
-      + prefix_list_id        = (known after apply)
-      + private_dns_enabled   = false
-      + requester_managed     = (known after apply)
-      + route_table_ids       = (known after apply)
-      + security_group_ids    = (known after apply)
-      + service_name          = "com.amazonaws.eu-west-1.s3"
-      + state                 = (known after apply)
-      + subnet_ids            = (known after apply)
-      + tags                  = {
-          + "Name"      = "S3"
-          + "createdby" = "Terraform"
-        }
-      + vpc_endpoint_type     = "Gateway"
-      + vpc_id                = "vpc-510efa34"
+  # null_resource.hello_world will be created
+  + resource "null_resource" "hello_world" {
+      + id = (known after apply)
     }
 
 Plan: 1 to add, 0 to change, 0 to destroy.
@@ -132,54 +91,102 @@ Do you want to perform these actions?
 
   Enter a value: yes
 
-aws_vpc_endpoint.s3: Creating...
-aws_vpc_endpoint.s3: Creation complete after 6s [id=vpce-0340fd0233d361bde]
+null_resource.hello_world: Creating...
+null_resource.hello_world: Provisioning with 'local-exec'...
+null_resource.hello_world (local-exec): Executing: ["cmd" "/C" "echo 'hello world'"]
+null_resource.hello_world (local-exec): 'hello world'
+null_resource.hello_world: Creation complete after 1s [id=5019739039794330655]
 
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+```
 
-Outputs:
+You have made a Terraform template that does something!
 
-endpoint = {
-  "cidr_blocks" = [
-    "52.218.0.0/17",
-  ]
-  "dns_entry" = []
-  "id" = "vpce-0340fd0233d361bde"
-  "network_interface_ids" = []
-  "owner_id" = "680235478471"
-  "policy" = "{\"Statement\":[{\"Action\":\"*\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":\"*\"}],\"Version\":\"2008-10-17\"}"
-  "prefix_list_id" = "pl-6da54004"
-  "private_dns_enabled" = false
-  "requester_managed" = false
-  "route_table_ids" = []
-  "security_group_ids" = []
-  "service_name" = "com.amazonaws.eu-west-1.s3"
-  "state" = "available"
-  "subnet_ids" = []
-  "tags" = {
-    "Name" = "S3"
-    "createdby" = "Terraform"
-  }
-  "vpc_endpoint_type" = "Gateway"
-  "vpc_id" = "vpc-510efa34"
+Now check what files you have on your filesystem.
+
+```bash
+ls -al
+total 1
+drwxrwxrwx 1 jim jim 512 Feb 22 06:59 .
+drwxrwxrwx 1 jim jim 512 Feb 22 06:54 ..
+drwxrwxrwx 1 jim jim 512 Feb 22 06:56 .terraform
+-rwxrwxrwx 1 jim jim 139 Feb 22 06:59 null.helloworld.tf
+-rwxrwxrwx 1 jim jim 513 Feb 22 06:59 terraform.tfstate
+```
+
+**Terraform.tfstate** is your local state file
+
+**.terraform** contains your providers and modules[if any].
+
+### Refactor
+
+We can be and should be more specify, state the exact Provider version required **provider.null.tf**
+
+```terraform
+provider "null" {
+    version="2.1.2"
 }
 ```
 
-!!! note "Takeaways"
+We specify versions so that we reproduce the same result.
 
-- datasources
-- token replacement
-- casting and indexing of lists
+Specify the TF core version by specifying Terraform version in **terraform.tf**
+
+```terraform
+terraform {
+    required_version="0.12.20"
+}
+```
+
+State files are linked to TF core version, all members of a team using TF need to use the same version. If one upgrades, all must upgrade, so add this to ensure that you mean to.
+
+Re-test these changes with a new apply.
+
+### Real world example
+
+```terraform
+resource "null_resource" "waiter" {
+  depends_on = [aws_iam_instance_profile.ec2profile]
+
+  provisioner "local-exec" {
+    command = "sleep 15"
+  }
+}
+```
+
+This is basically a hack, pretty much any use of a null resources is up to something dubious. In this case AWS was being rubbish and reported that an object was made when it wasn't yet - _eventually consistent_ and so here we are with a sleep statement.
+I rarely use Provisioners myself these days, they are bad style and a hangover from Terraforms beginnings.
+
+!!!note "Takeaways"
+    - Naming
+    - Versions
+    - Provisioners
+    - Providers
+    - Plan & apply
 
 ## Exercise
 
-1. Add outputs so that you can see all the values for the created resource.
+1. Change the required_version to "0.12.25" and Apply, what happens?
 
 ## Questions
 
-1. What is missing from this to set up access for an EC2 instance to use the Private Link?
+1. When could specifying the Version still be insufficient for repeatability?
+   - when the underlying API itself changes and is no longer backwardly compatible, this wont happen very quickly but it will happen.
+     Its also is bound to the version of the Terraform tool you are using.
 
-- There's no route, a modification to the route-able is still required.
+## Documentation
+
+For more on null resource see the Hashicorp docs:
+<https://www.terraform.io/docs/providers/null/resource.html>
+
+
+!!! note "Takeaways" - blah
+
+## Exercise
+
+1.
+
+## Questions
 
 ## Documentation
 

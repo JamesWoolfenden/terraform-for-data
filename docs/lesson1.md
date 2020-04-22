@@ -4,7 +4,9 @@
 
 What is Terraform
 
-A declarative second generation Configuration Management tool designed to provision cloud based Infrastructure via Code.
+Its an open-source command line tool for creating infrastructure.
+
+Terraform is a declarative second generation Configuration Management tool designed to provision cloud based Infrastructure via Code.
 
 What does that mean?
 
@@ -117,7 +119,8 @@ $ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.mic
     "ReservationId": "r-07540918b65b09424"
 }
 ```
-Ive got a new instance i-0529e7f9f72b02a53, but if I change the provisioned instance, In anyway, there is no easy way of knowing what has changed and there's no way of knowing what it is supposed to be.
+
+I've got a new instance i-0529e7f9f72b02a53, but if I change the provisioned instance, In anyway, there is no easy way of knowing what has changed and there's no way of knowing what it is supposed to be.
 
 Below is the same thing In Terraform, in code, stating how the instance should be:
 
@@ -138,7 +141,7 @@ Now If you modify the instance in any way - in this case by adding tags:
 aws ec2 create-tags --resources i-0529e7f9f72b02a53 --tags Key=Stack,Value=production
 ```
 
-You can check for configuration drift by using Terraform plan, (this is not possible with the cli) this command will show the difference between your orignal coded definition and current reality:
+You can check for configuration drift by using Terraform plan, (this is not possible with the cli) this command will show the difference between your original coded definition and current reality:
 
 ```cli
 $terraform plan
@@ -220,14 +223,66 @@ Note: You didn't specify an "-out" parameter to save this plan, so Terraform
 can't guarantee that exactly these actions will be performed if
 "terraform apply" is subsequently run.
 ```
+
 Just the Tags are new.
 
 This somehow detected the change in configuration.
 You can eliminate the "drift" by executing Terraform Apply again.
 
+## The Basics
+
+In the previous section we use a few Terraform commands against a set of files.
+If you run Terraform with the help command you will see there a quite a few options:
+
+```cli
+ terraform --help
+Usage: terraform [-version] [-help] <command> [args]
+
+The available commands for execution are listed below.
+The most common, useful commands are shown first, followed by
+less common or more advanced commands. If you're just getting
+started with Terraform, stick with the common commands. For the
+other commands, please read the help and docs before usage.
+
+Common commands:
+    apply              Builds or changes infrastructure
+    console            Interactive console for Terraform interpolations
+    destroy            Destroy Terraform-managed infrastructure
+    env                Workspace management
+    fmt                Rewrites config files to canonical format
+    get                Download and install modules for the configuration
+    graph              Create a visual graph of Terraform resources
+    import             Import existing infrastructure into Terraform
+    init               Initialize a Terraform working directory
+    login              Obtain and save credentials for a remote host
+    logout             Remove locally-stored credentials for a remote host
+    output             Read an output from a state file
+    plan               Generate and show an execution plan
+    providers          Prints a tree of the providers used in the configuration
+    refresh            Update local state file against real resources
+    show               Inspect Terraform state or plan
+    taint              Manually mark a resource for recreation
+    untaint            Manually unmark a resource as tainted
+    validate           Validates the Terraform files
+    version            Prints the Terraform version
+    workspace          Workspace management
+
+All other commands:
+    0.12upgrade        Rewrites pre-0.12 module source code for v0.12
+    debug              Debug output management (experimental)
+    force-unlock       Manually unlock the terraform state
+    push               Obsolete command for Terraform Enterprise legacy (v1)
+    state              Advanced state management
+```
+
+Of that list you use small basic sub-set frequently, you need to know, **init**, **apply**, **destroy** and **plan**:
+It always starts with init, but that only needs to run initially and if you need a new module or change the state backend. The life-cycle is:
+
+init->apply->destroy
+
 ### Idempotency
 
-Configuration managament tools are generally Idempotent.
+Configuration management tools are generally Idempotent.
 
 If you execute your AWS command:
 
@@ -237,12 +292,12 @@ aws ec2 run-instances --image-id ami-7ad7c21e --count 1 --instance-type t2.micro
 
 What would happen?
 
-You'd get anopther new instances as the command is not Idempotent.
+You'd get another new instances as the command is not Idempotent.
 
 This doesn't happen with each invocation in Terraform, each invocation is matched with is resulting **Terrafrom.tfstate** or its state file which is used to maintain a record of activity.
 This "statefile" is crucial to your use and understanding of how Terraform works.
 
-To remove the instance via the cli id have exectute a whole new cli command but id also have to find the instance_id.
+To remove the instance via the cli id have execute a whole new cli command but id also have to find the instance_id.
 With Terraform its just:
 
 ```cli
@@ -253,182 +308,3 @@ And the account will return to state it was before you created the instance, no 
 
 !!!note "Takeaways"
     - The destroy and apply command always give you a chance to review the changes before they happen.
-
-## Hello World
-
-Ensure that you have Terraform and an editor (VScode) installed:
-
-At your shell, make a **null resource** by creating a file called **null_resource.helloworld.tf**.
-
-```bash
-touch null_resource.helloworld.tf
-```
-
-A null resource doesn't do anything by itself and doesn't require any Cloud Provider Authentication.
-Then add the block below to it.
-
-```terraform
-resource "null_resource" "hello_world" {
-}
-```
-
-You have just created your first Terraform template, but as yet it does nothing.
-
-The next step is to add a local executable Provisioner, to give the null resource some utility:
-
-```terraform
-resource "null_resource" "hello_world" {
-  provisioner "local-exec" {
-    # This is a comment
-    command = "echo 'hello world'"
-  }
-}
-```
-
-Fairly straighforward?
-
-Time to try your work with **terraform init** at your shell.
-
-```bash
-$ terraform init
-
-Initializing the backend...
-
-Initializing provider plugins...
-- Checking for available provider plugins...
-- Downloading plugin for provider "null" (hashicorp/null) 2.1.2...
-
-The following providers do not have any version constraints in configuration,
-so the latest version was installed.
-
-To prevent automatic upgrades to new major versions that may contain breaking
-changes, it is recommended to add version = "..." constraints to the
-corresponding provider blocks in configuration, with the constraint strings
-suggested below.
-
-* provider.null: version = "~> 2.1"
-
-Terraform has been successfully initialized!
-
-You may now begin working with Terraform. Try running "terraform plan" to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
-
-If you ever set or change modules or backend configuration for Terraform,
-rerun this command to reinitialize your working directory. If you forget, other
-commands will detect it and remind you to do so if necessary.
-```
-
-Terraform init is only needed on new templates and when you add modules or change module versions or providers.
-You don't have to remember it all, Terraform will fail at apply.
-
-Now that has been set up, you can try **terraform apply**, and when prompted, say yes.
-
-```bash
-$ terraform apply
-An execution plan has been generated and is shown below.
-Resource actions are indicated with the following symbols:
-  + create
-
-Terraform will perform the following actions:
-
-  # null_resource.hello_world will be created
-  + resource "null_resource" "hello_world" {
-      + id = (known after apply)
-    }
-
-Plan: 1 to add, 0 to change, 0 to destroy.
-
-Do you want to perform these actions?
-  Terraform will perform the actions described above.
-  Only 'yes' will be accepted to approve.
-
-  Enter a value: yes
-
-null_resource.hello_world: Creating...
-null_resource.hello_world: Provisioning with 'local-exec'...
-null_resource.hello_world (local-exec): Executing: ["cmd" "/C" "echo 'hello world'"]
-null_resource.hello_world (local-exec): 'hello world'
-null_resource.hello_world: Creation complete after 1s [id=5019739039794330655]
-
-Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
-```
-
-You have made a Terraform template that does something!
-
-Now check what files you have on your filesystem.
-
-```bash
-ls -al
-total 1
-drwxrwxrwx 1 jim jim 512 Feb 22 06:59 .
-drwxrwxrwx 1 jim jim 512 Feb 22 06:54 ..
-drwxrwxrwx 1 jim jim 512 Feb 22 06:56 .terraform
--rwxrwxrwx 1 jim jim 139 Feb 22 06:59 null.helloworld.tf
--rwxrwxrwx 1 jim jim 513 Feb 22 06:59 terraform.tfstate
-```
-
-**Terraform.tfstate** is your local state file
-
-**.terraform** contains your providers and modules[if any].
-
-### Refactor
-
-We can be and should be more specify, state the exact Provider version required **provider.null.tf**
-
-```terraform
-provider "null" {
-    version="2.1.2"
-}
-```
-
-We specify versions so that we reproduce the same result.
-
-Specify the TF core version by specifying Terraform version in **terraform.tf**
-
-```terraform
-terraform {
-    required_version="0.12.20"
-}
-```
-
-State files are linked to TF core version, all members of a team using TF need to use the same version. If one upgrades, all must upgrade, so add this to ensure that you mean to.
-
-Re-test these changes with a new apply.
-
-### Real world example
-
-```terraform
-resource "null_resource" "waiter" {
-  depends_on = [aws_iam_instance_profile.ec2profile]
-
-  provisioner "local-exec" {
-    command = "sleep 15"
-  }
-}
-```
-
-This is basically a hack, pretty much any use of a null resources is up to something dubious. In this case AWS was being rubbish and reported that an object was made when it wasn't yet - _eventually consistent_ and so here we are with a sleep statement.
-I rarely use Provisioners myself these days, they are bad style and a hangover from Terraforms beginnings.
-
-!!!note "Takeaways"
-    - Naming
-    - Versions
-    - Provisioners
-    - Providers
-    - Plan & apply
-
-## Exercise
-
-1. Change the required_version to "0.12.25" and Apply, what happens?
-
-## Questions
-
-1. When could specifying the Version still be insufficient for repeatability?
-   - when the underlying API itself changes and is no longer backwardly compatible, this wont happen very quickly but it will happen.
-     Its also is bound to the version of the Terraform tool you are using.
-
-## Documentation
-
-For more on null resource see the Hashicorp docs:
-<https://www.terraform.io/docs/providers/null/resource.html>

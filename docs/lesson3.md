@@ -1,108 +1,185 @@
-# Lesson 103 AWS RDS and SQLServer
+# Lesson 102 AWS Authentication and Endpoints
 
-## Modules
+In the previous example there was no Auth as there was no Cloud API/Provider.
 
-Like any modern languages, Terraform supports the use of libraries or in Terraform - Modules.
-You can write you own, or re-use published modules. Hashicorp maintains a public Registry at <https://registry.terraform.io>.
-You can save yourself and others a lot of time by using and publishing modules.
+## pre-requisites
 
-To create a MSSQL instance in RDS I write all resource myslef or I could re-use the existing module "jameswoolfenden/rds/aws" <https://registry.terraform.io/modules/JamesWoolfenden/rds/aws/0.1.4>
+- an AWS account
+- IAM user with access keys
 
-This is implemented in **module.sql.tf**
+Setting up basic Auth for AWS/Terraform.
+
+- Install aws-cli
+- Install aws auth using you access keys
+
+```cli
+$ aws configure
+AWS Access Key ID [****************ZTLA]:
+AWS Secret Access Key [****************Z5Pj]:
+Default region name [eu-west-1]:
+Default output format [json]:
+```
+
+## Test Auth
+
+You can test your AWS authentication with a basic AWS command:
+
+```cli
+aws s3 ls
+2020-04-09 09:38:42 elasticbeanstalk-eu-west-1-680235478471
+2020-04-09 09:38:08 whosebucketisitanyway
+```
+
+If that is successful we can progress to our task.
+
+## VPC Endpoint for S3 - PrivateLink
+
+A provisioned PrivateLink means that all traffic is routed private to the endpoint rather than over the internet.
+
+### Add the Provider
+
+Create **provider.aws.tf**
 
 ```terraform
-module "rds-mssql" {
-  source            = "jameswoolfenden/rds/aws"
-  version           = "0.1.4"
-  common_tags       = var.common_tags
-  instance          = var.instance
-  instance_password = "Password123"
-  storage_encrypted = false
-  subnet_group      = var.subnet_group
-  subnet_ids        = var.subnet_ids
+provider "aws" {
+  region  = "eu-west-1"
+  version = "2.54"
 }
 ```
 
-Add your **variables.tf**
-```
-variable "instance" {
-}
+This completes you basic Authentication for AWS and Terraform.
+Test with:
 
-variable "subnet_group" {
-}
-
-
-variable "common_tags" {
-}
-
-variable "subnet_ids" {
-}
+```cli
+Terraform init
+Terraform apply
 ```
 
-And your values **sqlserver.auto.tfvars** you'll need to supply different subnets:
+### Datasources
 
-```HCL2
-instance = {
-  auto_minor_version_upgrade            = false
-  allocated_storage                     = 20
-  availability_zone                     = ""
-  backup_retention_period               = 7
-  backup_window                         = "23:01-23:31"
-  copy_tags_to_snapshot                 = true
-  create_db_parameter_group             = false
-  deletion_protection                   = false
-  engine                                = "sqlserver-ex"
-  engine_version                        = "14.00.3223.3.v1"
-  iam_database_authentication_enabled   = false
-  identifier                            = "demodb"
-  iops                                  = 0
-  instance_class                        = "db.t2.micro"
-  license_model                         = "license-included"
-  monitoring_interval                   = 0
-  maintenance_window                    = "tue:22:19-tue:22:49"
-  monitoring_role_arn                   = ""
-  max_allocated_storage                 = "1000"
-  multi_az                              = false
-  name                                  = ""
-  option_group_name                     = "default:sqlserver-ex-14-00"
-  parameter_group_name                  = "default.sqlserver-ex-14.0"
-  password                              = "YourPwdShouldBeLongAndSecure!"
-  performance_insights_enabled          = true
-  performance_insights_retention_period = "7"
-  port                                  = "1433"
-  security_group_names                  = null
-  skip_final_snapshot                   = true
-  snapshot_identifier                   = ""
-  storage_type                          = ""
-  timezone                              = "Central Standard Time"
-  username                              = "admin"
-}
+To add a VPC endpoint, we first need to gather some basic information from the account, datasources are very useful for this, create **data.tf**:
 
-common_tags = {
-  "createdby" = "Terrraform"
-}
-
-subnet_group = [{
-  name        = "group-1"
-  name_prefix = null
-  description = "sql dbs"
-}]
-
-subnet_ids = ["subnet-f60eff81", "subnet-11438974", "subnet-ebd9cead"]
+```terraform
+data "aws_vpcs" "cluster" {}
+data "aws_region" "current" {}
 ```
 
-Now when you apply, you will (eventually SQLServer provisioning is slow) create a MSSQL server instance.
+This will return ALL the VPC's is a region as well as what the current region is.
+
+### Create and AWS resource
+
+Add the code to create the S3 Endpoint **aws_vpc_endpoint.s3.tf**:
+This uses values from the datasources.
+
+```terraform
+resource "aws_vpc_endpoint" "s3" {
+
+  vpc_id       = element(tolist(data.aws_vpcs.cluster.ids), 0)
+  service_name = "com.amazonaws.${data.aws_region.current.name}.s3"
+
+  tags = {
+  "createdby" = "Terraform"
+  "Name"      = "S3"}
+}
+```
+
+element(tolist(data.aws_vpcs.cluster.ids), 0) will cast to a list and then return the element of the list at 0 - a vpc_id.
+
+\${data.aws_region.current.name} will be replaced in Terraform by my aws region **eu-west-1**.
+
+As you will see when you Terraform apply:
+
+```terraform apply
+$ terraform apply
+data.aws_region.current: Refreshing state...
+data.aws_vpcs.cluster: Refreshing state...
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # aws_vpc_endpoint.s3 will be created
+  + resource "aws_vpc_endpoint" "s3" {
+      + cidr_blocks           = (known after apply)
+      + dns_entry             = (known after apply)
+      + id                    = (known after apply)
+      + network_interface_ids = (known after apply)
+      + owner_id              = (known after apply)
+      + policy                = (known after apply)
+      + prefix_list_id        = (known after apply)
+      + private_dns_enabled   = false
+      + requester_managed     = (known after apply)
+      + route_table_ids       = (known after apply)
+      + security_group_ids    = (known after apply)
+      + service_name          = "com.amazonaws.eu-west-1.s3"
+      + state                 = (known after apply)
+      + subnet_ids            = (known after apply)
+      + tags                  = {
+          + "Name"      = "S3"
+          + "createdby" = "Terraform"
+        }
+      + vpc_endpoint_type     = "Gateway"
+      + vpc_id                = "vpc-510efa34"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+aws_vpc_endpoint.s3: Creating...
+aws_vpc_endpoint.s3: Creation complete after 6s [id=vpce-0340fd0233d361bde]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+endpoint = {
+  "cidr_blocks" = [
+    "52.218.0.0/17",
+  ]
+  "dns_entry" = []
+  "id" = "vpce-0340fd0233d361bde"
+  "network_interface_ids" = []
+  "owner_id" = "680235478471"
+  "policy" = "{\"Statement\":[{\"Action\":\"*\",\"Effect\":\"Allow\",\"Principal\":\"*\",\"Resource\":\"*\"}],\"Version\":\"2008-10-17\"}"
+  "prefix_list_id" = "pl-6da54004"
+  "private_dns_enabled" = false
+  "requester_managed" = false
+  "route_table_ids" = []
+  "security_group_ids" = []
+  "service_name" = "com.amazonaws.eu-west-1.s3"
+  "state" = "available"
+  "subnet_ids" = []
+  "tags" = {
+    "Name" = "S3"
+    "createdby" = "Terraform"
+  }
+  "vpc_endpoint_type" = "Gateway"
+  "vpc_id" = "vpc-510efa34"
+}
+```
 
 !!! note "Takeaways"
-    - reuse
 
-## Exercises
+- datasources
+- token replacement
+- casting and indexing of lists
 
-1. Create a module of your own.
-2. Create an instance using the module and connect to the SQL instance.
-3. Automatically obtain the SQL endpoint.
+## Exercise
+
+1. Add outputs so that you can see all the values for the created resource.
 
 ## Questions
+
+1. What is missing from this to set up access for an EC2 instance to use the Private Link?
+
+- There's no route, a modification to the route-able is still required.
 
 ## Documentation
 
