@@ -178,17 +178,3 @@ I rarely use Provisioners myself these days, they are bad style and a hangover f
 
 For more on null resource see the Hashicorp docs:
 <https://www.terraform.io/docs/providers/null/resource.html>
-
-
-!!! note "Takeaways" - blah
-
-## Exercise
-
-1.
-
-## Questions
-
-## Documentation
-
-For more on null resource see the Hashicorp docs:
-<https://www.terraform.io/docs/providers/null/resource.html>

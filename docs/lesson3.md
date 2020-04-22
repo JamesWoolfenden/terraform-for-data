@@ -165,11 +165,10 @@ endpoint = {
 }
 ```
 
-!!! note "Takeaways"
-
-- datasources
-- token replacement
-- casting and indexing of lists
+!!!note "Takeaways"
+    - datasources
+    - token replacement
+    - casting and indexing of lists
 
 ## Exercise
 

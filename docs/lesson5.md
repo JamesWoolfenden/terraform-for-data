@@ -12,6 +12,7 @@ Expand the archive and add it to your Terraform plugins:
 tar -xvf terraform-provider-snowflake_0.11.0_linux_amd64.tar.gz
 mv terraform-provider-snowflake_v0.11.0 $HOME/.terraform.d/plugins/linux_amd64/
 ```
+
 ToSet-up Authentication with Snowflake, you'll need to add your Snowflake credentials as environmental variables:
 
 ```bash
@@ -46,7 +47,7 @@ resource "snowflake_schema" "schema" {
 }
 ```
 
-This template needs to have the variable **schema** defined,  create **variables.tf**
+This template needs to have the variable **schema** defined, create **variables.tf**
 
 ```terraform
 variable "schemas" {
@@ -142,6 +143,7 @@ created_on	name	kind
 2020-04-17 02:02:42.057 -0700	PUBLIC	SCHEMA
 2020-04-21 02:33:30.736 -0700	RAW	SCHEMA
 ```
+
 So thats Terraform creating Snowflake resources via IaC.
 
 You can then clean up remove these schemas with Terraform destroy:
@@ -203,10 +205,9 @@ created_on	name	kind
 2020-04-17 02:02:42.057 -0700	PUBLIC	SCHEMA
 ```
 
-!!! note "Takeaways" - blah
-
-- Can create Snowflake db objects via Terraform.
-- Clean of DB objects by default.
+!!!note "Takeaways" - blah
+    - Can create Snowflake db objects via Terraform.
+    - Clean of DB objects by default.
 
 ## Exercise
 

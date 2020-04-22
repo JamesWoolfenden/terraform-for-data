@@ -35,6 +35,6 @@ Hashicorps learn site
 <https://learn.hashicorp.com/terraform>
 
 !!! note
-    These lessons are aimed at anyone, only familiarity with Git and a code editor [atom or VSCode] is expected.
-    
+These lessons are aimed at anyone, only familiarity with Git and a code editor [atom or VSCode] is expected.
+
     Terraform can be a real handful to type at the CLI, but at least its not called *constellation* as originally planned.

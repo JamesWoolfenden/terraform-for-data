@@ -24,7 +24,8 @@ module "rds-mssql" {
 ```
 
 Add your **variables.tf**
-```
+
+```terraform
 variable "instance" {
 }
 
@@ -93,7 +94,7 @@ subnet_ids = ["subnet-f60eff81", "subnet-11438974", "subnet-ebd9cead"]
 
 Now when you apply, you will (eventually SQLServer provisioning is slow) create a MSSQL server instance.
 
-!!! note "Takeaways"
+!!!note "Takeaways"
     - reuse
 
 ## Exercises
