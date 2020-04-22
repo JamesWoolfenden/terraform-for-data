@@ -6,7 +6,7 @@ nav:
   - Terraform 101:
       - Lesson 101 Intro: lesson1.md
       - Lesson 102 Hello World: lesson2.md
-      - Lesson 103 AWS: lesson3.md
+      - Lesson 103 AWS & Privatelink: lesson3.md
       - Lesson 104 AWS RDS MSSQL: lesson4.md
       - Lesson 105 Snowflake: lesson5.md
       #- Lesson 106: lesson6.md
