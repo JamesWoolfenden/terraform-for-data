@@ -2,9 +2,9 @@
 
 ## Introduction to Terraform
 
-What is Terraform
+What is Terraform?
 
-Its an open-source command line tool for creating infrastructure.
+It's an open-source command line tool for creating infrastructure.
 
 Terraform is a declarative second generation Configuration Management tool designed to provision cloud based Infrastructure via Code.
 
@@ -310,6 +310,66 @@ Terraform destroy
 ```
 
 And the account will return to state it was before you created the instance, no orphaned objects ever remain.
+
+## State
+
+Local state, should never really be used for very temporary. As it doesnt work when your collabrating or have an automatic process - CI.
+
+### AWS
+
+This is the Old way. Doesnt make so much sense if you're mutli-cloud/api. 
+
+- Create an S3 Bucket.
+- Manage the bucket yourself.
+- IAM and Bucket permissions.
+- Add reference terraform.tf.
+
+```terraform
+terraform {
+  backend "s3" {
+    bucket = "mybucket"
+    key    = "path/to/my/key"
+    region = "us-east-1"
+  }
+}
+```
+
+### Terraform cloud
+
+This is the new way. Its managed by Hashicorp, so no maintenance overhead and at all and its easy for multi-cloud & multi-account. Its also a gateway to Terraform clouds other capabilities.
+
+- Add reference **terraform.tf** to your template.
+
+```terraform
+terraform {
+  backend "remote" {
+    organization="Slalom"
+    workspaces { name="basic-demo-instance"}
+  }
+}
+```
+
+Then set up the new state backend with:
+
+```cli
+$ terraform init
+
+Initializing the backend...
+
+Successfully configured the backend "remote"! Terraform will automatically
+use this backend unless the backend configuration changes.
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "aws" (hashicorp/aws) 2.56.0...
+
+Terraform has been successfully initialized!
+```
+
+Show workspace:
+<https://app.terraform.io/app/Slalom/workspaces/basic-demo-instance/runs>
+
+Open your cli and Terraform apply.
 
 !!!note "Takeaways"
     - The destroy and apply command always give you a chance to review the changes before they happen.
