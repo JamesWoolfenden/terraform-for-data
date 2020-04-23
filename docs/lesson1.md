@@ -1,4 +1,4 @@
-# Lesson 101 Introduction and Hello World
+# Lesson 101 Introduction
 
 ## Introduction to Terraform
 
