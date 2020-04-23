@@ -313,11 +313,108 @@ And the account will return to state it was before you created the instance, no 
 
 ## State
 
-Local state, should never really be used for very temporary. As it doesnt work when your collabrating or have an automatic process - CI.
+When you run an apply a state file **terraform.tfstate** is made, this records what infrastructure was made.
 
-### AWS
+```json
+{
+  "version": 4,
+  "terraform_version": "0.12.20",
+  "serial": 1,
+  "lineage": "48a6fad8-28ca-c946-5f42-c46721405781",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "example",
+      "provider": "provider.aws",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "ami": "ami-7ad7c21e",
+            "arn": "arn:aws:ec2:eu-west-2:680235478471:instance/i-0763a257a728d24eb",
+            "associate_public_ip_address": false,
+            "availability_zone": "eu-west-2a",
+            "cpu_core_count": 1,
+            "cpu_threads_per_core": 1,
+            "credit_specification": [
+              {
+                "cpu_credits": "standard"
+              }
+            ],
+            "disable_api_termination": false,
+            "ebs_block_device": [],
+            "ebs_optimized": false,
+            "ephemeral_block_device": [],
+            "get_password_data": false,
+            "hibernation": false,
+            "host_id": null,
+            "iam_instance_profile": "",
+            "id": "i-0763a257a728d24eb",
+            "instance_initiated_shutdown_behavior": null,
+            "instance_state": "running",
+            "instance_type": "t2.micro",
+            "ipv6_address_count": 0,
+            "ipv6_addresses": [],
+            "key_name": "",
+            "metadata_options": [
+              {
+                "http_endpoint": "enabled",
+                "http_put_response_hop_limit": 1,
+                "http_tokens": "optional"
+              }
+            ],
+            "monitoring": false,
+            "network_interface": [],
+            "network_interface_id": null,
+            "password_data": "",
+            "placement_group": "",
+            "primary_network_interface_id": "eni-0d5fa924c7aebb3b8",
+            "private_dns": "ip-10-0-0-89.eu-west-2.compute.internal",
+            "private_ip": "10.0.0.89",
+            "public_dns": "",
+            "public_ip": "",
+            "root_block_device": [
+              {
+                "delete_on_termination": true,
+                "encrypted": false,
+                "iops": 200,
+                "kms_key_id": "",
+                "volume_id": "vol-056aeda90e38c83d0",
+                "volume_size": 8,
+                "volume_type": "io1"
+              }
+            ],
+            "security_groups": [],
+            "source_dest_check": true,
+            "subnet_id": "subnet-05f8f3c120238ca8d",
+            "tags": null,
+            "tenancy": "default",
+            "timeouts": null,
+            "user_data": null,
+            "user_data_base64": null,
+            "volume_tags": {},
+            "vpc_security_group_ids": [
+              "sg-05749b21616ab0cdc"
+            ]
+          },
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ=="
+        }
+      ]
+    }
+  ]
+}
 
-This is the Old way. Doesnt make so much sense if you're mutli-cloud/api. 
+```
+
+This file is left in your folder when you are using Local state. Local state is the most basic type and should only be used at the start.
+
+It doesn't work when your collaborating or have an automatic process - CI. Corrupting it or losing it is also a major pain. You should always use remote state. 
+
+### AWS S3
+
+This is the Old way. Doesn't make so much sense if you're mutli-cloud/api. 
 
 - Create an S3 Bucket.
 - Manage the bucket yourself.
