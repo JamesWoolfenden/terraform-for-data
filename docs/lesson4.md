@@ -23,7 +23,7 @@ module "rds-mssql" {
 }
 ```
 
-Add your **variables.tf**
+Add your definitions in **variables.tf**
 
 ```terraform
 variable "instance" {
@@ -40,7 +40,7 @@ variable "subnet_ids" {
 }
 ```
 
-And your values **sqlserver.auto.tfvars** you'll need to supply different subnets:
+And finally your values **sqlserver.auto.tfvars**, you'll need to supply different subnets to mine:
 
 ```HCL2
 instance = {
