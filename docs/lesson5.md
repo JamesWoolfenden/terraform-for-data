@@ -1,5 +1,7 @@
 # Lesson 104 Terraforming Snowflake
 
+This is definitely a much more advanced topic.
+
 ## Install Custom Snowflake provider
 
 From <https://github.com/chanzuckerberg/terraform-provider-snowflake> download your platforms latest provider <https://github.com/chanzuckerberg/terraform-provider-snowflake/releases>:
