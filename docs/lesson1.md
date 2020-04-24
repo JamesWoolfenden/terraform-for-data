@@ -279,13 +279,19 @@ Of that list you use small basic sub-set frequently, you need to know, **init**,
 
 It always starts with **init**, but that only needs to run initially and if you need a new module or change the state backend. The life-cycle is:
 
+## The Workflow
+
+As just touched upon the basic Workflow is:
+
 ```cli
-init->apply->destroy
+code->init->apply->destroy
 ```
+
+Of course this would happen in a git repository, with adds, commits and pushes. More detail on the standard workflow is found here <https://www.terraform.io/guides/core-workflow.html>.
 
 ## Idempotency
 
-As you saw in the example Terraform doesn't create a new resource on every run. It differs from Tools like cloud formation or scripting in that is idempotent. When it fails it stops or fails it doesn't clean up automatically. You can fix your mistake and Terraform will only change what you changed and hopefully what failed in your last run.
+As you saw in the earlier example Terraform doesn't create a new resource on every run. It differs from Tools like cloud formation or scripting in that is idempotent. When it fails it stops or fails it doesn't clean up automatically. You can fix your mistake and Terraform will only change what you changed and hopefully what failed in your last run.
 
 Nearly all modern configuration management tools are Idempotent.
 
@@ -395,9 +401,7 @@ When you run an apply a state file **terraform.tfstate** is made, this records w
             "user_data": null,
             "user_data_base64": null,
             "volume_tags": {},
-            "vpc_security_group_ids": [
-              "sg-05749b21616ab0cdc"
-            ]
+            "vpc_security_group_ids": ["sg-05749b21616ab0cdc"]
           },
           "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjo2MDAwMDAwMDAwMDAsImRlbGV0ZSI6MTIwMDAwMDAwMDAwMCwidXBkYXRlIjo2MDAwMDAwMDAwMDB9LCJzY2hlbWFfdmVyc2lvbiI6IjEifQ=="
         }
@@ -405,16 +409,15 @@ When you run an apply a state file **terraform.tfstate** is made, this records w
     }
   ]
 }
-
 ```
 
 This file is left in your folder when you are using Local state. Local state is the most basic type and should only be used at the start.
 
-It doesn't work when your collaborating or have an automatic process - CI. Corrupting it or losing it is also a major pain. You should always use remote state. 
+It doesn't work when your collaborating or have an automatic process - CI. Corrupting it or losing it is also a major pain. You should always use remote state.
 
 ### AWS S3
 
-This is the Old way. Doesn't make so much sense if you're mutli-cloud/api. 
+This is the Old way. Doesn't make so much sense if you're mutli-cloud/api.
 
 - Create an S3 Bucket.
 - Manage the bucket yourself.
@@ -471,10 +474,18 @@ Open your cli and Terraform apply.
 !!!note "Takeaways"
     - The destroy and apply command always give you a chance to review the changes before they happen.
 
-## Exercise
+## Exercises
 
 1. Go through the Hashicorp Learn site for more basic information <https://learn.hashicorp.com/terraform>
+2. Look at the other verbs that the Terraform cli, how could you use them?
 
 ## Questions
 
-## Documentation
+1. Why use IaC?
+2. Why use Terraform?
+
+### Documentation
+
+<https://www.terraform.io/guides/core-workflow.html>
+<https://www.terraform.io/intro/use-cases.html>
+<https://www.terraform.io/intro/vs/index.html>
