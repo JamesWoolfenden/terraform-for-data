@@ -1,6 +1,0 @@
-terraform {
-  backend "remote" {
-    organization="slalom"
-    workspace = "slalom/basic-demo-instance"
-  }
-}
