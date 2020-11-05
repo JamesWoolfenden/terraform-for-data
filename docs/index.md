@@ -1,5 +1,8 @@
-# Terraform-for-data [![Latest Release](https://img.shields.io/github/v/tag/jameswoolfenden/terraform-for-data.svg)](https://github.com/JamesWoolfenden/terraform-for-data)
+# Terraform-for-data 
 
+[![Latest Release](https://img.shields.io/github/v/tag/jameswoolfenden/terraform-for-data.svg)](https://github.com/JamesWoolfenden/terraform-for-data)
+
+By [James Woolfenden](https://www.linkedin.com/in/jameswoolfenden/)
 ## Terraform 101 for data
 
 From Zero.

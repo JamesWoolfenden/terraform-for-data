@@ -15,6 +15,9 @@ nav:
   - About: about.md
 theme:
   name: material
+  features:
+    - navigation.tabs
+    - navigation.instant
   favicon: "assets/images/favicon.ico"
 repo_name: "jamesWoolfenden/terraform-for-data"
 repo_url: "https://github.com/jamesWoolfenden/terraform-for-data"
@@ -50,13 +53,13 @@ plugins:
 extra:
   manifest: "manifest.webmanifest"
   social:
-    - type: "github"
-      link: "https://github.com/slalom-consulting-ltd"
-    - type: "twitter"
-      link: "https://twitter.com/slalom"
-    - type: "linkedin"
-      link: "https://linkedin.com/company/slalom-consulting/"
+    - icon: fontawesome/brands/github-alt
+      link: "https://github.com/jameswoolfenden"
+    - icon: fontawesome/brands/twitter
+      link: "https://twitter.com/JimWoolfenden"
+    - icon: fontawesome/brands/linkedin
+      link: "https://www.linkedin.com/in/jameswoolfenden/"
 
 # Copyright
-copyright: "Copyright &copy; 2020 Slalom, LLC"
+copyright: "Copyright &copy; 2020 James Woolfenden"
 site_author: "James Woolfenden"
