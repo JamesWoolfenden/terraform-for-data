@@ -5,4 +5,12 @@ resource "aws_instance" "example" {
   vpc_security_group_ids = [
     "sg-05749b21616ab0cdc",
   ]
+
+    root_block_device {
+    encrypted=true
+  }
+
+  metadata_options {
+    http_tokens="required"
+  }
 }
