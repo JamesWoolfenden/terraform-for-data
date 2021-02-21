@@ -1,4 +1,4 @@
-# Terraform-for-data 
+# Terraform-for-data
 
 [![Latest Release](https://img.shields.io/github/v/tag/jameswoolfenden/terraform-for-data.svg)](https://github.com/JamesWoolfenden/terraform-for-data)
 
@@ -39,5 +39,5 @@ Hashicorps learn site
 
 !!! note
     These lessons are aimed at anyone, only familiarity with Git and a code editor [atom or VSCode] is expected.
-    
+
     Terraform can be a real handful to type at the CLI, but at least its not called *constellation* as originally planned.
