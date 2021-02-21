@@ -7,10 +7,10 @@ resource "aws_instance" "example" {
   ]
 
   root_block_device {
-    encrypted=true
+    encrypted = true
   }
 
   metadata_options {
-    http_tokens="required"
+    http_tokens = "required"
   }
 }

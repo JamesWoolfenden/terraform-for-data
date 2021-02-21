@@ -6,11 +6,11 @@ resource "aws_instance" "example" {
     "sg-05749b21616ab0cdc",
   ]
 
-    root_block_device {
-    encrypted=true
+  root_block_device {
+    encrypted = true
   }
 
   metadata_options {
-    http_tokens="required"
+    http_tokens = "required"
   }
 }
